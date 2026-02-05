@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Loading…</title>
 
   <style>
@@ -15,42 +16,43 @@
       height: 100vh;
       text-align: center;
       padding: 20px;
+      transition: opacity 0.6s ease;
     }
 
     .hidden { display: none; }
 
-    h1 { font-size: 2.8rem; }
-    h2 { font-size: 2rem; margin-top: 25px; }
+    h1 { font-size: 2.6rem; }
+    h2 { font-size: 1.9rem; margin-top: 25px; }
 
     p {
-      font-size: 1.15rem;
-      max-width: 650px;
-      margin: 15px auto;
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 14px auto;
     }
 
     .loader {
       width: 300px;
       background: #fff;
-      border-radius: 20px;
-      padding: 25px;
+      border-radius: 18px;
+      padding: 22px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
 
     .bar {
-      height: 16px;
+      height: 14px;
       width: 0%;
       background: #ff4d6d;
       border-radius: 10px;
-      margin-top: 15px;
+      margin-top: 14px;
       transition: width 0.5s;
     }
 
-    .buttons { margin-top: 40px; }
+    .buttons { margin-top: 35px; }
 
     button {
-      font-size: 1.4rem;
-      padding: 14px 28px;
-      margin: 15px;
+      font-size: 1.3rem;
+      padding: 14px 26px;
+      margin: 14px;
       border: none;
       border-radius: 14px;
       cursor: pointer;
@@ -64,53 +66,45 @@
     }
 
     .heart {
-      font-size: 2.2rem;
+      font-size: 2rem;
       animation: float 2s infinite;
     }
 
     @keyframes float {
       0% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
+      50% { transform: translateY(-10px); }
       100% { transform: translateY(0); }
     }
 
     .kiss {
-      margin-top: 30px;
-      animation: pop 1.5s ease-in-out infinite;
+      margin-top: 25px;
+      animation: pop 1.4s ease-in-out infinite;
     }
 
     @keyframes pop {
-      0%, 100% { transform: scale(1); }
+      0%,100% { transform: scale(1); }
       50% { transform: scale(1.05); }
-    }
-
-    .small {
-      font-size: 0.9rem;
-      opacity: 0.8;
-      margin-top: 60px;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Background Music (plays after YES) -->
-  <audio id="bgMusic" loop>
-    <!-- Replace this with ANY romantic MP3 you like -->
-    <source src="https://github.com/user-attachments/files/25086782/Until_I_Found_You-646184-mobiles24.mp3" type="audio/mpeg">
+  <!-- Audio stays in DOM always -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="Until_I_Found_You-646184-mobiles24.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Fake Loading Screen -->
+  <!-- Loading -->
   <div id="loading" class="loader">
     <h2>Loading important data…</h2>
     <p id="loading-text">Initializing feelings</p>
     <div class="bar" id="progress"></div>
   </div>
 
-  <!-- Main Content -->
+  <!-- Main -->
   <div id="content" class="hidden">
     <h1>Hi Avani 👋</h1>
-
     <p>This is Harsh.</p>
 
     <p>
@@ -120,7 +114,6 @@
     </p>
 
     <p>
-      So here we are.<br>
       Slightly awkward.<br>
       Very honest.
     </p>
@@ -131,38 +124,51 @@
       <button id="yes">YES ❤️</button>
       <button id="no">NO 💀</button>
     </div>
+  </div>
 
-    <p class="small">(Button behavior is intentional.)</p>
+  <!-- Final screen -->
+  <div id="final" class="hidden">
+    <h1>YAY 🥹❤️</h1>
+    <p class="heart">❤️ ❤️ ❤️ ❤️ ❤️</p>
+
+    <div class="kiss">
+      <svg width="200" height="140" viewBox="0 0 220 160">
+        <circle cx="70" cy="80" r="35" fill="#ffd1dc"/>
+        <circle cx="150" cy="80" r="35" fill="#ffe6f0"/>
+        <circle cx="60" cy="75" r="4"/>
+        <circle cx="80" cy="75" r="4"/>
+        <circle cx="140" cy="75" r="4"/>
+        <circle cx="160" cy="75" r="4"/>
+        <path d="M85 85 Q110 95 135 85" stroke="#ff4d6d" stroke-width="3" fill="none"/>
+        <text x="105" y="60" font-size="22">💋</text>
+      </svg>
+    </div>
+
+    <p>Avani, you just made Harsh very, very happy.</p>
+    <p>Happy Valentine’s Day 💘</p>
   </div>
 
   <script>
-    /* Fake loader logic */
-    const loadingTexts = [
+    /* Loader */
+    const texts = [
       "Initializing feelings",
       "Overthinking everything",
       "Gathering courage",
-      "Still overthinking",
       "Almost there…"
     ];
 
-    let progress = 0;
-    let step = 0;
-
+    let i = 0, progress = 0;
     const bar = document.getElementById("progress");
     const text = document.getElementById("loading-text");
-    const loading = document.getElementById("loading");
-    const content = document.getElementById("content");
 
-    const interval = setInterval(() => {
-      progress += 20;
-      bar.style.width = progress + "%";
-      text.innerText = loadingTexts[step] || "Done";
-      step++;
+    const loader = setInterval(() => {
+      bar.style.width = (progress += 25) + "%";
+      text.innerText = texts[i++] || "Done";
 
       if (progress >= 100) {
-        clearInterval(interval);
-        loading.classList.add("hidden");
-        content.classList.remove("hidden");
+        clearInterval(loader);
+        document.getElementById("loading").classList.add("hidden");
+        document.getElementById("content").classList.remove("hidden");
         document.title = "Avani ❤️";
       }
     }, 700);
@@ -172,55 +178,21 @@
     const yesBtn = document.getElementById("yes");
     const music = document.getElementById("bgMusic");
 
-    let escapeCount = 0;
+    ["mouseover","touchstart"].forEach(e =>
+      noBtn.addEventListener(e, () => {
+        noBtn.style.left = Math.random()*80+"vw";
+        noBtn.style.top = Math.random()*80+"vh";
+        noBtn.style.position = "absolute";
+      })
+    );
 
-    noBtn.addEventListener("mouseover", () => {
-      escapeCount++;
-      noBtn.style.position = "absolute";
-      noBtn.style.left = Math.random() * 80 + "vw";
-      noBtn.style.top = Math.random() * 80 + "vh";
+    yesBtn.addEventListener("click", async () => {
+      try { await music.play(); } catch {}
 
-      if (escapeCount > 4) {
-        noBtn.innerText = "Nice try 😌";
-      }
-    });
-
-    yesBtn.addEventListener("click", () => {
-      music.play();
-
-      document.body.innerHTML = `
-        <h1>YAY 🥹❤️</h1>
-        <p class="heart">❤️ ❤️ ❤️ ❤️ ❤️</p>
-
-        <div class="kiss">
-          <svg width="220" height="160" viewBox="0 0 220 160">
-            <circle cx="70" cy="80" r="35" fill="#ffd1dc"/>
-            <circle cx="150" cy="80" r="35" fill="#ffe6f0"/>
-            <circle cx="60" cy="75" r="4"/>
-            <circle cx="80" cy="75" r="4"/>
-            <circle cx="140" cy="75" r="4"/>
-            <circle cx="160" cy="75" r="4"/>
-            <path d="M85 85 Q110 95 135 85" stroke="#ff4d6d" stroke-width="3" fill="none"/>
-            <text x="105" y="60" font-size="22">💋</text>
-            <text x="90" y="45" font-size="16">❤️</text>
-            <text x="120" y="45" font-size="16">❤️</text>
-          </svg>
-        </div>
-
-        <p>
-          Avani, you just made Harsh very, very happy.
-        </p>
-
-        <p>
-          Thank you for saying yes to my slightly stupid,<br>
-          very sincere Valentine proposal.
-        </p>
-
-        <h2>Happy Valentine’s Day 💘</h2>
-      `;
+      document.getElementById("content").classList.add("hidden");
+      document.getElementById("final").classList.remove("hidden");
     });
   </script>
 
 </body>
 </html>
-
