@@ -10,24 +10,30 @@
       margin: 0;
       font-family: "Comic Sans MS", "Trebuchet MS", cursive;
       background: linear-gradient(135deg, #ffd1dc, #ffe6f0);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
       text-align: center;
-      padding: 20px;
-      transition: opacity 0.6s ease;
     }
 
-    .hidden { display: none; }
+    section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .hidden {
+      display: none;
+      pointer-events: none;
+    }
 
     h1 { font-size: 2.6rem; }
-    h2 { font-size: 1.9rem; margin-top: 25px; }
+    h2 { font-size: 1.9rem; margin-top: 20px; }
 
     p {
       font-size: 1.1rem;
       max-width: 600px;
-      margin: 14px auto;
+      margin: 12px auto;
     }
 
     .loader {
@@ -90,20 +96,22 @@
 
 <body>
 
-  <!-- Audio stays in DOM always -->
+  <!-- AUDIO (stays alive always) -->
   <audio id="bgMusic" loop preload="auto">
     <source src="Until_I_Found_You-646184-mobiles24.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Loading -->
-  <div id="loading" class="loader">
-    <h2>Loading important data…</h2>
-    <p id="loading-text">Initializing feelings</p>
-    <div class="bar" id="progress"></div>
-  </div>
+  <!-- LOADING SCREEN -->
+  <section id="loading">
+    <div class="loader">
+      <h2>Loading important data…</h2>
+      <p id="loadingText">Initializing feelings</p>
+      <div class="bar" id="progress"></div>
+    </div>
+  </section>
 
-  <!-- Main -->
-  <div id="content" class="hidden">
+  <!-- MAIN QUESTION -->
+  <section id="content" class="hidden">
     <h1>Hi Avani 👋</h1>
     <p>This is Harsh.</p>
 
@@ -124,10 +132,10 @@
       <button id="yes">YES ❤️</button>
       <button id="no">NO 💀</button>
     </div>
-  </div>
+  </section>
 
-  <!-- Final screen -->
-  <div id="final" class="hidden">
+  <!-- FINAL SCREEN -->
+  <section id="final" class="hidden">
     <h1>YAY 🥹❤️</h1>
     <p class="heart">❤️ ❤️ ❤️ ❤️ ❤️</p>
 
@@ -146,11 +154,11 @@
 
     <p>Avani, you just made Harsh very, very happy.</p>
     <p>Happy Valentine’s Day 💘</p>
-  </div>
+  </section>
 
   <script>
-    /* Loader */
-    const texts = [
+    /* LOADER */
+    const messages = [
       "Initializing feelings",
       "Overthinking everything",
       "Gathering courage",
@@ -159,11 +167,12 @@
 
     let i = 0, progress = 0;
     const bar = document.getElementById("progress");
-    const text = document.getElementById("loading-text");
+    const text = document.getElementById("loadingText");
 
     const loader = setInterval(() => {
-      bar.style.width = (progress += 25) + "%";
-      text.innerText = texts[i++] || "Done";
+      progress += 25;
+      bar.style.width = progress + "%";
+      text.innerText = messages[i++] || "Done";
 
       if (progress >= 100) {
         clearInterval(loader);
@@ -173,18 +182,18 @@
       }
     }, 700);
 
-    /* Buttons */
+    /* BUTTON LOGIC */
     const noBtn = document.getElementById("no");
     const yesBtn = document.getElementById("yes");
     const music = document.getElementById("bgMusic");
 
-    ["mouseover","touchstart"].forEach(e =>
-      noBtn.addEventListener(e, () => {
-        noBtn.style.left = Math.random()*80+"vw";
-        noBtn.style.top = Math.random()*80+"vh";
+    ["mouseover","touchstart"].forEach(evt => {
+      noBtn.addEventListener(evt, () => {
         noBtn.style.position = "absolute";
-      })
-    );
+        noBtn.style.left = Math.random() * 70 + "vw";
+        noBtn.style.top = Math.random() * 70 + "vh";
+      });
+    });
 
     yesBtn.addEventListener("click", async () => {
       try { await music.play(); } catch {}
