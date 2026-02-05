@@ -6,6 +6,10 @@
   <title>Loading…</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: "Comic Sans MS", "Trebuchet MS", cursive;
@@ -13,18 +17,17 @@
       text-align: center;
     }
 
-    section {
+    .screen {
       min-height: 100vh;
-      display: flex;
+      display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
 
-    .hidden {
-      display: none;
-      pointer-events: none;
+    .screen.active {
+      display: flex;
     }
 
     h1 { font-size: 2.6rem; }
@@ -36,6 +39,7 @@
       margin: 12px auto;
     }
 
+    /* Loader */
     .loader {
       width: 300px;
       background: #fff;
@@ -50,10 +54,13 @@
       background: #ff4d6d;
       border-radius: 10px;
       margin-top: 14px;
-      transition: width 0.5s;
+      transition: width 0.4s ease;
     }
 
-    .buttons { margin-top: 35px; }
+    /* Buttons */
+    .buttons {
+      margin-top: 30px;
+    }
 
     button {
       font-size: 1.3rem;
@@ -62,15 +69,21 @@
       border: none;
       border-radius: 14px;
       cursor: pointer;
+      z-index: 10;
     }
 
-    #yes { background: #ff4d6d; color: white; }
+    #yes {
+      background: #ff4d6d;
+      color: white;
+    }
+
     #no {
       background: #555;
       color: white;
-      position: relative;
+      position: absolute;
     }
 
+    /* Animations */
     .heart {
       font-size: 2rem;
       animation: float 2s infinite;
@@ -83,8 +96,8 @@
     }
 
     .kiss {
-      margin-top: 25px;
-      animation: pop 1.4s ease-in-out infinite;
+      margin-top: 30px;
+      animation: pop 1.5s ease-in-out infinite;
     }
 
     @keyframes pop {
@@ -96,22 +109,22 @@
 
 <body>
 
-  <!-- AUDIO (stays alive always) -->
+  <!-- MUSIC -->
   <audio id="bgMusic" loop preload="auto">
     <source src="Until_I_Found_You-646184-mobiles24.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- LOADING SCREEN -->
-  <section id="loading">
+  <!-- LOADING -->
+  <div id="loading" class="screen active">
     <div class="loader">
       <h2>Loading important data…</h2>
       <p id="loadingText">Initializing feelings</p>
       <div class="bar" id="progress"></div>
     </div>
-  </section>
+  </div>
 
-  <!-- MAIN QUESTION -->
-  <section id="content" class="hidden">
+  <!-- QUESTION -->
+  <div id="question" class="screen">
     <h1>Hi Avani 👋</h1>
     <p>This is Harsh.</p>
 
@@ -132,32 +145,45 @@
       <button id="yes">YES ❤️</button>
       <button id="no">NO 💀</button>
     </div>
-  </section>
+  </div>
 
-  <!-- FINAL SCREEN -->
-  <section id="final" class="hidden">
+  <!-- FINAL -->
+  <div id="final" class="screen">
     <h1>YAY 🥹❤️</h1>
     <p class="heart">❤️ ❤️ ❤️ ❤️ ❤️</p>
 
     <div class="kiss">
-      <svg width="200" height="140" viewBox="0 0 220 160">
-        <circle cx="70" cy="80" r="35" fill="#ffd1dc"/>
-        <circle cx="150" cy="80" r="35" fill="#ffe6f0"/>
-        <circle cx="60" cy="75" r="4"/>
-        <circle cx="80" cy="75" r="4"/>
-        <circle cx="140" cy="75" r="4"/>
-        <circle cx="160" cy="75" r="4"/>
-        <path d="M85 85 Q110 95 135 85" stroke="#ff4d6d" stroke-width="3" fill="none"/>
-        <text x="105" y="60" font-size="22">💋</text>
+      <svg width="240" height="180" viewBox="0 0 240 180">
+        <!-- Heads -->
+        <circle cx="95" cy="95" r="38" fill="#ffd1dc"/>
+        <circle cx="145" cy="95" r="38" fill="#ffe6f0"/>
+
+        <!-- Hair -->
+        <path d="M55 90 Q95 30 135 90" fill="#3a2a1a"/>
+        <path d="M105 85 Q145 35 185 95" fill="#5a3a1a"/>
+
+        <!-- Eyes -->
+        <path d="M82 95 Q88 99 94 95" stroke="#333" stroke-width="2" fill="none"/>
+        <path d="M106 95 Q112 99 118 95" stroke="#333" stroke-width="2" fill="none"/>
+
+        <path d="M132 95 Q138 99 144 95" stroke="#333" stroke-width="2" fill="none"/>
+        <path d="M156 95 Q162 99 168 95" stroke="#333" stroke-width="2" fill="none"/>
+
+        <!-- Kiss -->
+        <path d="M120 105 Q125 108 130 105" stroke="#ff4d6d" stroke-width="3" fill="none"/>
+
+        <!-- Hearts -->
+        <text x="115" y="55" font-size="18">❤️</text>
+        <text x="135" y="50" font-size="14">❤️</text>
       </svg>
     </div>
 
     <p>Avani, you just made Harsh very, very happy.</p>
     <p>Happy Valentine’s Day 💘</p>
-  </section>
+  </div>
 
   <script>
-    /* LOADER */
+    /* Loader */
     const messages = [
       "Initializing feelings",
       "Overthinking everything",
@@ -165,9 +191,15 @@
       "Almost there…"
     ];
 
-    let i = 0, progress = 0;
+    let i = 0;
+    let progress = 0;
+
     const bar = document.getElementById("progress");
     const text = document.getElementById("loadingText");
+
+    const loading = document.getElementById("loading");
+    const question = document.getElementById("question");
+    const final = document.getElementById("final");
 
     const loader = setInterval(() => {
       progress += 25;
@@ -176,30 +208,29 @@
 
       if (progress >= 100) {
         clearInterval(loader);
-        document.getElementById("loading").classList.add("hidden");
-        document.getElementById("content").classList.remove("hidden");
+        loading.classList.remove("active");
+        question.classList.add("active");
         document.title = "Avani ❤️";
       }
     }, 700);
 
-    /* BUTTON LOGIC */
-    const noBtn = document.getElementById("no");
+    /* Buttons */
     const yesBtn = document.getElementById("yes");
+    const noBtn = document.getElementById("no");
     const music = document.getElementById("bgMusic");
 
-    ["mouseover","touchstart"].forEach(evt => {
+    ["mouseenter","touchstart"].forEach(evt => {
       noBtn.addEventListener(evt, () => {
-        noBtn.style.position = "absolute";
         noBtn.style.left = Math.random() * 70 + "vw";
         noBtn.style.top = Math.random() * 70 + "vh";
       });
     });
 
     yesBtn.addEventListener("click", async () => {
-      try { await music.play(); } catch {}
+      try { await music.play(); } catch(e) {}
 
-      document.getElementById("content").classList.add("hidden");
-      document.getElementById("final").classList.remove("hidden");
+      question.classList.remove("active");
+      final.classList.add("active");
     });
   </script>
 
